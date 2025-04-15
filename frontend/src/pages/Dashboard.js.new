@@ -1,0 +1,187 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Alert,
+  IconButton,
+  Tooltip
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
+import RequestForm from '../components/RequestForm';
+
+const Dashboard = () => {
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showForm, setShowForm] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    fetchRequests();
+  }, [navigate]);
+
+  const fetchRequests = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:5000/api/requests', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setRequests(response.data.data);
+    } catch (error) {
+      setError(error.response?.data?.message || 'Error fetching requests');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (formData) => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const token = localStorage.getItem('token');
+      let response;
+
+      if (selectedRequest) {
+        // Update existing request
+        response = await axios.put(
+          `http://localhost:5000/api/requests/${selectedRequest._id}`,
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setRequests(requests.map(req => 
+          req._id === selectedRequest._id ? response.data.data : req
+        ));
+      } else {
+        // Create new request
+        response = await axios.post(
+          'http://localhost:5000/api/requests',
+          formData,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setRequests([...requests, response.data.data]);
+      }
+
+      setShowForm(false);
+      setSelectedRequest(null);
+    } catch (error) {
+      setError(error.response?.data?.message || 'Error submitting request');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    setShowForm(false);
+    setSelectedRequest(null);
+  };
+
+  const handleEdit = (request) => {
+    setSelectedRequest(request);
+    setShowForm(true);
+  };
+
+  if (loading) {
+    return (
+      <Container sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+        <CircularProgress />
+      </Container>
+    );
+  }
+
+  return (
+    <Container sx={{ mt: 4 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <Typography variant="h4">My Requests</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowForm(true)}
+        >
+          Create New Request
+        </Button>
+      </div>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <RequestForm
+        open={showForm}
+        onClose={handleClose}
+        onSubmit={handleSubmit}
+        initialData={selectedRequest}
+      />
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Request ID</TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>School</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Remarks</TableCell>
+              <TableCell>Created At</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {requests.map((request) => (
+              <TableRow key={request._id}>
+                <TableCell>{request.requestId}</TableCell>
+                <TableCell>{request.title}</TableCell>
+                <TableCell>{request.description}</TableCell>
+                <TableCell>{request.school}</TableCell>
+                <TableCell>{request.status}</TableCell>
+                <TableCell>{request.remarks || '-'}</TableCell>
+                <TableCell>
+                  {new Date(request.createdAt).toLocaleDateString()}
+                </TableCell>
+                <TableCell>
+                  {(request.status === 'approved' || request.status === 'rejected') && (
+                    <Tooltip title="Edit Request">
+                      <IconButton onClick={() => handleEdit(request)} size="small">
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+            {requests.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  No requests found
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
+  );
+};
+
+export default Dashboard;
