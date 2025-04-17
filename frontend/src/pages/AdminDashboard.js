@@ -150,7 +150,7 @@ const AdminDashboard = () => {
       // Set default headers for all axios requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      const response = await axios.get('http://localhost:5000/api/requests/all');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/requests/all`);
       
       if (response.data.success) {
         setRequests(response.data.data);
@@ -207,7 +207,7 @@ const AdminDashboard = () => {
       });
 
       const updatedRequest = await axios.put(
-        `http://localhost:5000/api/requests/${request._id}`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/requests/${request._id}`,
         { 
           status,
           remark: remarks.trim()
@@ -294,7 +294,7 @@ const AdminDashboard = () => {
 
   const handleSubmitResponse = async (request, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/requests/${request._id}`, {
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/requests/${request._id}`, {
         status,
         adminResponse: response,
       });
@@ -310,7 +310,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/requests/${requestId}/status`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/requests/${requestId}/status`,
         {
           status: newStatus,
           remarks: remarks
@@ -452,7 +452,6 @@ const AdminDashboard = () => {
             </FormControl>
           </Grid>
         </Grid>
-
         {/* Time Filter */}
         <Box sx={{ mb: 3 }}>
           <FormControl sx={{ minWidth: 200 }}>
@@ -568,9 +567,8 @@ const AdminDashboard = () => {
           Next
         </Button>
       </Box>
-      </Box>
 
-    {/* Response Dialog */}
+      {/* Response Dialog */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Response to Request</DialogTitle>
         <DialogContent>
@@ -720,6 +718,7 @@ const AdminDashboard = () => {
           <Button onClick={() => setDetailsDialogOpen(false)}>Close</Button>
         </DialogActions>
       </Dialog>
+    </Box>
     </Container>
   );
 };
