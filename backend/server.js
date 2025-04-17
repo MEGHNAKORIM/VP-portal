@@ -6,7 +6,14 @@ const dotenv = require('dotenv');
 const multer = require('multer');
 const fs = require('fs');
 require('dotenv').config();
-
+// // PORT=5000
+// MONGODB_URI=mongodb+srv://Kshitij:abcd@requestportal.t8dlwjs.mongodb.net/?retryWrites=true&w=majority&appName=RequestPortal
+// JWT_SECRET=your_super_secret_jwt_key_change_in_production
+// SMTP_HOST=smtp.gmail.com
+// SMTP_PORT=587
+// SMTP_USER=meghnakorimi@gmail.com
+// SMTP_PASS=sngc ebzm egxp ibgg
+// GMAIL_APP_PASSWORD=Meghna@123$123
 
 // Create uploads directory if it doesn't exist
 const uploadDir = path.join(__dirname, 'uploads');
