@@ -55,6 +55,7 @@ const AdminDashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [nameFilter, setNameFilter] = useState('');
+  const [requestIdFilter, setRequestIdFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [chartData, setChartData] = useState([]);
   const [requestTypes, setRequestTypes] = useState([]);
@@ -65,6 +66,8 @@ const AdminDashboard = () => {
     rejected: 0,
     pending: 0
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const requestsPerPage = 10;
 
   const navigate = useNavigate();
 
@@ -355,12 +358,19 @@ const AdminDashboard = () => {
     );
   }
 
-  // Filter requests based on name and type
+  // Filter requests based on name, request ID, and type
   const filteredRequests = requests.filter((request) => {
     const nameMatch = request.user?.name?.toLowerCase().includes(nameFilter.toLowerCase());
+    const requestIdMatch = request.requestId?.toLowerCase().includes(requestIdFilter.toLowerCase());
     const typeMatch = typeFilter === 'all' || request.subject === typeFilter;
-    return nameMatch && typeMatch;
+    return nameMatch && requestIdMatch && typeMatch;
   });
+
+  // Pagination logic
+  const indexOfLastRequest = currentPage * requestsPerPage;
+  const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
+  const currentRequests = filteredRequests.slice(indexOfFirstRequest, indexOfLastRequest);
+  const totalPages = Math.ceil(filteredRequests.length / requestsPerPage);
 
   return (
     <Container maxWidth="lg">
@@ -399,21 +409,38 @@ const AdminDashboard = () => {
 
         {/* Filters */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              label="Filter by Request ID"
+              value={requestIdFilter}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setRequestIdFilter(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               label="Filter by Name"
               value={nameFilter}
-              onChange={(e) => setNameFilter(e.target.value)}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setNameFilter(e.target.value);
+              }}
             />
           </Grid>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={4}>
             <FormControl fullWidth>
               <InputLabel>Filter by Request Type</InputLabel>
               <Select
                 value={typeFilter}
                 label="Filter by Request Type"
-                onChange={(e) => setTypeFilter(e.target.value)}
+                onChange={(e) => {
+                  setCurrentPage(1);
+                  setTypeFilter(e.target.value);
+                }}
               >
                 <MenuItem value="all">All Types</MenuItem>
                 {Array.from(new Set(requests.map(r => r.subject))).map((type) => (
@@ -483,7 +510,7 @@ const AdminDashboard = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredRequests.map((request) => (
+              {currentRequests.map((request) => (
                 <TableRow key={request._id}>
                   <TableCell>{request.requestId}</TableCell>
                   <TableCell>{request.user?.name || 'N/A'}</TableCell>
@@ -518,9 +545,32 @@ const AdminDashboard = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+      {/* Pagination Controls */}
+      <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+        <Button
+          variant="outlined"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+          sx={{ mr: 2 }}
+        >
+          Previous
+        </Button>
+        <Typography variant="body2" sx={{ mx: 2 }}>
+          Page {currentPage} of {totalPages || 1}
+        </Typography>
+        <Button
+          variant="outlined"
+          disabled={currentPage === totalPages || totalPages === 0}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+          sx={{ ml: 2 }}
+        >
+          Next
+        </Button>
+      </Box>
       </Box>
 
-      {/* Response Dialog */}
+    {/* Response Dialog */}
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>Response to Request</DialogTitle>
         <DialogContent>

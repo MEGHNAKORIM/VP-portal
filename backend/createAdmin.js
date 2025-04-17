@@ -5,7 +5,7 @@ require('dotenv').config();
 const createAdmin = async () => {
   try {
     // Connect to MongoDB
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/request_portal';
+    const mongoUri = process.env.MONGODB_URI ;
 
     await mongoose.connect(mongoUri);
     console.log('Connected to MongoDB');
@@ -19,8 +19,6 @@ const createAdmin = async () => {
       email: 'meghnakorimi@gmail.com',
       password: 'Meghana@123',
       role: 'admin',
-      department: 'Administration',
-      school: 'Admin Department',
       phone: '1234567890'
     });
 

@@ -5,7 +5,7 @@ require('dotenv').config({ path: '../config/config.env' });
 const setupDatabase = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect('mongodb://localhost:27017/request_portal');
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log('MongoDB Connected');
 
     // Create admin user
