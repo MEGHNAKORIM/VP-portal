@@ -1,31 +1,28 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config({ path: './config/config.env' });
 const cors = require('cors');
-const dotenv = require('dotenv');
 const multer = require('multer');
 const fs = require('fs');
+
+const uploadDir = path.join(__dirname, 'uploads');
+
 fs.mkdirSync(uploadDir, { recursive: true });
 
-// Load env vars
-dotenv.config({ path: './config/config.env' });
-
-// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log('MongoDB Connection Error:', err));
 
 const app = express();
 
-// Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json());
 
-// File Upload Configuration
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // Ensure uploads directory exists

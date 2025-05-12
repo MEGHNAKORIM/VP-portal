@@ -86,7 +86,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/verify-email',
+        'http://3.109.190.251:5000/api/auth/verify-email',
         verificationData,
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -152,7 +152,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const response = await axios.post('http://3.109.190.251:5000/api/auth/register', formData);
       console.log('Registration response:', response.data);
 
       if (response.data.success) {

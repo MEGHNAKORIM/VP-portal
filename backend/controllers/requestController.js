@@ -138,7 +138,7 @@ exports.updateRequestStatus = async (req, res) => {
           </div>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666;">
-            <p style="margin: 0;">Best regards,<br>Request Portal Admin</p>
+            <p style="margin: 0;">Best regards,<br>VP Portal Admin</p>
           </div>
         </div>
       `;

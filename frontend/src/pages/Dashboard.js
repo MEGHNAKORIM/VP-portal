@@ -70,7 +70,7 @@ const Dashboard = () => {
       if (selectedRequest) {
         // Update existing request
         response = await axios.put(
-          `http://localhost:5000/api/requests/${selectedRequest._id}`,
+          `http://3.109.190.251:5000/api/requests/${selectedRequest._id}`,
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
@@ -80,7 +80,7 @@ const Dashboard = () => {
       } else {
         // Create new request
         response = await axios.post(
-          'http://localhost:5000/api/requests',
+          'http://3.109.190.251:5000/api/requests',
           formData,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
@@ -98,7 +98,7 @@ const Dashboard = () => {
   const fetchUserProfile = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/users/me', {
+      const response = await axios.get('http://3.109.190.251:5000/api/users/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUser(response.data);
@@ -113,7 +113,7 @@ const Dashboard = () => {
   const fetchRequests = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/requests/me', {
+      const response = await axios.get('http://3.109.190.251:5000/api/requests/me', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(response.data.data);

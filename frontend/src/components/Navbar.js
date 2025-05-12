@@ -36,7 +36,7 @@ const Navbar = () => {
           }}
           onClick={() => navigate('/')}
         >
-          Request Portal
+          VP Portal
         </Typography>
         {user ? (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

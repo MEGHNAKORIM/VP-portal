@@ -645,20 +645,20 @@ const AdminDashboard = () => {
                       </Typography>
                       {attachment.filePath.toLowerCase().endsWith('.pdf') ? (
                         <iframe
-                          src={`http://localhost:5000${attachment.filePath}`}
+                          src={`http://3.109.190.251:5000${attachment.filePath}`}
                           width="100%"
                           height="500px"
                           title="PDF Preview"
                         />
                       ) : attachment.fileType.startsWith('image/') ? (
                         <img
-                          src={`http://localhost:5000${attachment.filePath}`}
+                          src={`http://3.109.190.251:5000${attachment.filePath}`}
                           alt={attachment.fileName}
                           style={{ maxWidth: '100%', maxHeight: '500px' }}
                         />
                       ) : (
                         <Button
-                          href={`http://localhost:5000${attachment.filePath}`}
+                          href={`http://3.109.190.251:5000${attachment.filePath}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           variant="outlined"

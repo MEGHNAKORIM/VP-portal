@@ -64,7 +64,7 @@ const CreateRequest = () => {
 
         try {
           const uploadRes = await axios.post(
-            'http://localhost:5000/api/upload',
+            'http://3.109.190.251:5000/api/upload',
             uploadFormData,
             {
               headers: {
@@ -120,7 +120,7 @@ const CreateRequest = () => {
       }
 
       await axios.post(
-        'http://localhost:5000/api/requests',
+        'http://3.109.190.251:5000/api/requests',
         requestData,
         {
           headers: {
